@@ -17,12 +17,21 @@ const userSchema = new mongoose.Schema({
     email:{
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        index: true
     },
     password: {
         type: String,
-        required: true
+        required: () => !this.githubId
+    },
+    githubId: {
+        type: String,
+    },
+    role: {
+        type: String,
+        enum: ["user", "admin"],
+        default: "user"
     }
-});
+}, { timestamps: true } );
 
 export const User = mongoose.model('User', userSchema);
