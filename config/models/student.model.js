@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 
 const studentSchema = new mongoose.Schema({
-    name: {
+    firstName: {
         type: String,
         required: true,
     },
-    lastname: {
+    lastName: {
         type: String,
         required: true,
     },
@@ -21,14 +21,6 @@ const studentSchema = new mongoose.Schema({
         unique: true,
         lowercase: true,
         match:[/.+@.+\..+/, 'Email inválido'],
-    },
-    courses: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course',
-    }],
-    isActive:{
-        type: Boolean,
-        default: true,
     }
 })
 
