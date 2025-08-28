@@ -1,37 +1,12 @@
-import jwt from 'jsonwebtoken';
+import passport from "passport";
 
-export function requireLogin(req, res, next) {
-    if (!req.session.user) {
-        return res.status(401).json({ error: "No autorizado" });
-    }
+// Protege con passport-jwt leyendo la cookie 'access_token'
+export const requiereJwtCookie = passport.authenticate('jwt-cookie', {session: false});
+
+// Autorización por rol simple
+export const requireRole = (...roles) => (req, res, next) => {
+    // passport coloca al user en req.user
+    if(!req.user) return res.status(401).json({error: 'No autorizado ⚠️'});
+    if(!roles.includes(req.user.role)) return res.status(403).json({error: 'Prohibido el paso ❌'});
     next();
-}
-
-export function alreadyLoggedIn(req, res, next) {
-    if (req.session.user) {
-        return res.status(403).json({ error: "Ya estas logueado" });
-    }
-    next();
-}
-
-//Autorización por Roles
-export function requireRole(role) {
-    return function (req, res, next) {
-        const user = req.session?.user || req.user;
-        if (!user) return res.status(401).json({ error: "Usuario no autorizado ⚠️" });
-        if (user.role !== role) return res.status(403).json({ error: "Prohibido ❌" });
-        next();
-    }
-}
-
-export function requireJWT(req, res, next) {
-    const header= req.headers.authorization || "";
-    const token = header.startWith("Bearer ") ? header.slice(7) : null;
-    if (!token) return res.status(401).json({ error: "Token faltante ⚠️" });
-    try {
-        req.jwt = jwt.verify(token, process.env.JWT_SECRET);
-        next();
-    } catch {
-        return res.status(401).json({ error: "Token inválido/expirado ❌" });
-    }
-}
+};

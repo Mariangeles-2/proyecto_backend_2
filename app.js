@@ -9,8 +9,6 @@ import logger from "./middleware/logger.middleware.js";
 
 import {connectToMongoDBAtlas} from "./config/db/connect.config.js";
 import cookieParser from "cookie-parser";
-import MongoStore from "connect-mongo";
-import session from "express-session";
 import dotenv from "dotenv";
 
 import {initPassport} from "./config/auth/passport.config.js";
@@ -24,35 +22,16 @@ const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use(logger);
-app.use(cookieParser(process.env.SESSION_SECRET));
+app.use(cookieParser());
 
-//Se configura la sesión
+//Se configura la aplicación
 const startServer = async () => {
     await connectToMongoDBAtlas();
 
-    const store = MongoStore.create({
-        client: (await import("mongoose")).default.connection.getClient(),
-        ttl: 60 * 60,
-    })
-
-    app.use(
-        session({
-            secret: process.env.SESSION_SECRET || "secret-key",
-            resave: false,
-            saveUninitialized: false,
-            store,
-            cookie: {
-                maxAge: 1 * 60 * 60 * 1000, // 1hr
-                httpOnly: true,
-            },
-        })
-    );
-
     //Se inicializa Passport
-    //Passport - Login
+    //Passport - JWT
     initPassport();
     app.use(passport.initialize());
-    app.use(passport.session());
 
     //Routers
     app.use(`/`, homeRouter);

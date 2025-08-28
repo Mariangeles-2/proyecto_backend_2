@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
         const student= await Student.find();
         res.status(200).json(student);
     }catch (error){
-        res.status(500).json({error:error.message});
+        res.status(500).json({error: `Error del servidor: ${error.message} 🐛`});
     }
 });
 
@@ -19,15 +19,15 @@ router.post('/', async (req, res) => {
     try {
         const {firstName, lastName, age, email} = req.body;
         if (!firstName||!lastName||!age||!email){
-            res.status(400).json({error:"Todos los datos son requeridos."});
+            res.status(400).json({error:"Todos los datos son requeridos ❌"});
         }
         const student = new Student({firstName, lastName, age, email});
         await student.save();
 
-        res.status(200).json({message:`El estudiante ${firstName} ha sido agregado.`});
+        res.status(200).json({message:`El estudiante ${firstName} ha sido agregado ✅`});
 
     }catch (error){
-        res.status(500).json({error:error.message});
+        res.status(500).json({error: `Error del servidor: ${error.message} 🐛`});
     }
 });
 
@@ -36,17 +36,17 @@ router.get('/:id', async (req, res) => {
     try{
         const studentId = req.params.id;
         if(!mongoose.Types.ObjectId.isValid(studentId)){
-            return res.status(400).json({error: "ID Invalido"})
+            return res.status(400).json({error: "ID inválido ⚠️"})
         }
 
         const student = await Student.findById(studentId);
         if (!student){
-            return res.status(404).json({error:`Estudiante con Id ${studentId} no encontrado`})
+            return res.status(404).json({error:`Estudiante con ID ${studentId} no encontrado ❌`})
         }
         res.status(200).json(student);
 
     }catch (error) {
-        res.status(500).json({error:error.message});
+        res.status(500).json({error: `Error del servidor: ${error.message} 🐛`});
     }
 });
 
@@ -55,7 +55,7 @@ router.put('/:id', async (req, res) => {
     try{
         const studentId = req.params.id;
         if(!mongoose.Types.ObjectId.isValid(studentId)){
-            return res.status(400).json({error: "ID Invalido"})
+            return res.status(400).json({error: "ID inválido ⚠️"})
         }
 
         const student = await Student.findByIdAndUpdate(studentId, req.body, {
@@ -64,12 +64,12 @@ router.put('/:id', async (req, res) => {
         });
 
         if (!student){
-            return res.status(404).json({error:`Estudiante con Id ${studentId} no encontrado`})
+            return res.status(404).json({error:`Estudiante con ID ${studentId} no encontrado ❌`})
         }
-        res.status(200).json(student);
+        res.status(200).json({message: `Estudiante actualizado ✅`, student});
 
     }catch (error) {
-        res.status(500).json({error:error.message});
+        res.status(500).json({error: `Error del servidor: ${error.message} 🐛`});
     }
 });
 
@@ -78,17 +78,17 @@ router.delete('/:id', async (req, res) => {
     try{
         const studentId = req.params.id;
         if(!mongoose.Types.ObjectId.isValid(studentId)){
-            return res.status(400).json({error: "ID Invalido"})
+            return res.status(400).json({error: "ID inválido ⚠️"})
         }
 
         const student = await Student.findByIdAndDelete(studentId);
         if (!student){
-            return res.status(404).json({error:`Estudiante con Id ${studentId} no encontrado`})
+            return res.status(404).json({error:`Estudiante con ID ${studentId} no encontrado ❌`})
         }
-        res.status(200).json(student);
+        res.status(200).json({message: `Estudiante eliminado ✅`, student});
 
     }catch (error) {
-        res.status(500).json({error:error.message});
+        res.status(500).json({error: `Error del servidor: ${error.message} 🐛`});
     }
 });
 
